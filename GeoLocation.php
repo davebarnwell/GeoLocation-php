@@ -22,11 +22,11 @@ class Geolocation
     
     if (is_array($address_parts)) {
       if (count($address_parts) == 0)
-        throw new GeolocationException("No address to Geocode", 1);
+        throw new GeoLocationException("No address to Geocode", 1);
       $address = implode(' ', $address_parts);
     } else {
       if (strlen($address_parts) == 0)
-        throw new GeolocationException("No address to Geocode", 1);
+        throw new GeoLocationException("No address to Geocode", 1);
       $address = $address_parts;
     }
 
@@ -52,7 +52,7 @@ class Geolocation
     // check if curl is available
     if (!function_exists('curl_init')) {
       // throw error
-      throw new GeolocationException('cURL isn\'t installed.');
+      throw new GeoLocationException('cURL isn\'t installed.');
     }
 
     // create URL
@@ -83,7 +83,7 @@ class Geolocation
     curl_close($curl);
 
     // we have errors
-    if ($errorNumber != '') throw new GeolocationException($errorMessage);
+    if ($errorNumber != '') throw new GeoLocationException($errorMessage);
 
     // redefine response as json decoded
     $response = json_decode($response);
@@ -93,5 +93,5 @@ class Geolocation
   }
 }
 
-class GeolocationException extends \Exception {}
+class GeoLocationException extends \Exception {}
 
