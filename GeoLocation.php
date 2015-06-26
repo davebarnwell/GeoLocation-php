@@ -8,9 +8,20 @@ namespace Freshsauce;
 class Geolocation
 {
   // API URL
-  const API_URL = 'http://maps.googleapis.com/maps/api/geocode/json';
-  
+  const API_URL   = 'http://maps.googleapis.com/maps/api/geocode/json';
+  static $API_KEY = null;
+
   private function __construct() {} // No need to 
+  
+  /**
+  * Set Google API key
+  *
+  * @param string $key 
+  * @return void
+  */
+  public static function setAPIKey($key) {
+    self::$API_KEY = $key;
+  }
   
   /**
    * Get LatLng of address
@@ -43,6 +54,55 @@ class Geolocation
   }
   
   /**
+   * Get LatLng, Town, county and country from post code
+   *
+   * @param string $postcode
+   * @return array('lat' => float|null, 'lng' => float|null, 'town' => string, 'county' => string, 'country' => string, 'country_code' => string)
+   * @throws GeolocationException
+   */
+  public static function getInfoByPostcode( $postcode ) {
+    
+    if (strlen($postcode) == 0) {
+      throw new GeolocationException("No address to Geocode", 1);
+    }
+
+    // define result
+    $results = self::doCall([
+      'address' => $postcode,
+      'sensor' => 'false'
+    ]);
+    
+    // return coordinates latitude/longitude
+    $data = [
+      'lat'          => isset($results[0]->geometry->location->lat) ? (float) $results[0]->geometry->location->lat : null,
+      'lng'          => isset($results[0]->geometry->location->lat) ? (float) $results[0]->geometry->location->lng : null,
+      'town'         => null,
+      'county'       => null,
+      'country'      => null,
+      'country_code' => null,
+      'formated'     => isset($results[0]->formatted_address) ? $results[0]->formatted_address : null,
+      'postcode'     => null
+    ];
+    
+    // Parse out address components
+    if (isset($results[0]->address_components)) {
+      foreach($results[0]->address_components as $ac) {
+        if (in_array('postal_code',$ac->types)) {
+          $data['postcode'] = $ac->long_name;
+        } else if (in_array('postal_town',$ac->types)) {
+          $data['town'] = $ac->long_name;
+        } else if (in_array('administrative_area_level_2',$ac->types)) {
+          $data['county'] = $ac->long_name;
+        } else if (in_array('country',$ac->types)) {
+          $data['country']      = $ac->long_name;
+          $data['country_code'] = $ac->short_name;
+        }
+      }
+    }
+    return $data;
+  }
+  
+  /**
    * Do call
    *
    * @return object
@@ -55,6 +115,8 @@ class Geolocation
       throw new GeoLocationException('cURL isn\'t installed.');
     }
 
+    if (self::$API_KEY) $parameters['key'] = self::$API_KEY;
+    
     // create URL
     $url = self::API_URL . '?';
     foreach ($parameters as $key => $value) {
@@ -87,6 +149,9 @@ class Geolocation
 
     // redefine response as json decoded
     $response = json_decode($response);
+
+    // We have an error so throw it
+    if (isset($response->error_message)) throw new GeoLocationException($response->error_message);
 
     // return the content
     return $response->results;
