@@ -12,10 +12,17 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-FILTER=""
+# define phpunit reference and
+# download if can't find phpunit locally
+PHPUNIT="${DIR}"/phpunit.phar
+if ! [ -f "${PHPUNIT}" ]; then
+  wget -P"${DIR}" https://phar.phpunit.de/phpunit.phar
+  chmod +x "${PHPUNIT}"
+fi
 
+FILTER=""
 if ! [ -z "$1" ]; then
    FILTER="--filter $1"
 fi
 
-"${DIR}"/phpunit.phar --verbose --colors=always ${FILTER} "${DIR}"/tests.php
+"${PHPUNIT}" --verbose --colors=always ${FILTER} "${DIR}"/tests.php
