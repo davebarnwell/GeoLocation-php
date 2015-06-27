@@ -26,7 +26,7 @@ class Geolocation
   /**
    * Get LatLng of address
    *
-   * @param array|string $$address_parts array of address parts least significant first or a string
+   * @param array|string $address_parts array of address parts least significant first or a string
    * @return void
    */
   public static function getLatLng( $address_parts ) {
@@ -54,21 +54,21 @@ class Geolocation
   }
   
   /**
-   * Get LatLng, Town, county and country from post code
+   * Get LatLng, Town, county and country from a lookup string such as post code
    *
-   * @param string $postcode
+   * @param string $lookup
    * @return array('lat' => float|null, 'lng' => float|null, 'town' => string, 'county' => string, 'country' => string, 'country_code' => string)
    * @throws GeolocationException
    */
-  public static function getInfoByPostcode( $postcode ) {
+  public static function getSummaryInfo( $lookup ) {
     
-    if (strlen($postcode) == 0) {
+    if (strlen($lookup) == 0) {
       throw new GeolocationException("No address to Geocode", 1);
     }
 
     // define result
     $results = self::doCall([
-      'address' => $postcode,
+      'address' => $lookup,
       'sensor' => 'false'
     ]);
     
@@ -100,6 +100,26 @@ class Geolocation
       }
     }
     return $data;
+  }
+  
+  /**
+   * Get all returned lookup info from a lookup string such as post code
+   *
+   * @param string $lookup
+   * @return array
+   * @throws GeolocationException
+   */
+  public static function getAllResults( $lookup ) {
+    
+    if (strlen($lookup) == 0) {
+      throw new GeolocationException("No address to Geocode", 1);
+    }
+
+    // define result
+    return self::doCall([
+      'address' => $lookup,
+      'sensor' => 'false'
+    ]);
   }
   
   /**
