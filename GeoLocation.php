@@ -57,7 +57,7 @@ class Geolocation
    * Get LatLng, Town, county and country from a lookup string such as post code
    *
    * @param string $lookup
-   * @return array()
+   * @return array
    * @throws GeolocationException
    */
   public static function getSummaryInfo( $lookup ) {
