@@ -3,7 +3,7 @@
   A PHP class for resolving textual addresses to LatLng's or other info using Googles Free Geo location API
   If your volume goes up you need to use an API key from google and pay for the service
 
-  While an API key is not required, Google will heavily limit your requests if you dont use one.
+  While an API key is not required, Google will heavily limit your requests if you dont use one. Set it once as follows and all subsequent calls will use it.
   
     \Freshsauce\GeoLocation::setAPIKey('your-google-api-map-key);
     
