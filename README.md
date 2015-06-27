@@ -1,5 +1,7 @@
 # Freshsauce/GeoLocation
 
+[![Build Status](https://scrutinizer-ci.com/g/freshsauce/GeoLocation-php/badges/build.png?b=master)](https://scrutinizer-ci.com/g/freshsauce/GeoLocation-php/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/freshsauce/GeoLocation-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/freshsauce/GeoLocation-php/?branch=master)
+
   A PHP class for resolving textual addresses to LatLng's or other info using Googles Free Geo location API
   If your volume goes up you need to use an API key from google and pay for the service
 
