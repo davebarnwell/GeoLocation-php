@@ -14,11 +14,11 @@ class Geolocation
   private function __construct() {} // No need to 
   
   /**
-  * Set Google API key
-  *
-  * @param string $key 
-  * @return void
-  */
+   * Set Google API key
+   *
+   * @param string $key 
+   * @return void
+   */
   public static function setAPIKey($key) {
     self::$API_KEY = $key;
   }
@@ -29,15 +29,17 @@ class Geolocation
    * @param array|string $address_parts array of address parts least significant first or a string
    * @return void
    */
-  public static function getLatLng( $address_parts ) {
+  public static function getLatLng($address_parts) {
     
     if (is_array($address_parts)) {
-      if (count($address_parts) == 0)
-        throw new GeoLocationException("No address to Geocode", 1);
+      if (count($address_parts) == 0) {
+              throw new GeoLocationException("No address to Geocode", 1);
+      }
       $address = implode(' ', $address_parts);
     } else {
-      if (strlen($address_parts) == 0)
-        throw new GeoLocationException("No address to Geocode", 1);
+      if (strlen($address_parts) == 0) {
+              throw new GeoLocationException("No address to Geocode", 1);
+      }
       $address = $address_parts;
     }
 
@@ -60,7 +62,7 @@ class Geolocation
    * @return array
    * @throws GeolocationException
    */
-  public static function getSummaryInfo( $lookup ) {
+  public static function getSummaryInfo($lookup) {
     
     if (strlen($lookup) == 0) {
       throw new GeolocationException("No address to Geocode", 1);
@@ -86,14 +88,14 @@ class Geolocation
     
     // Parse out address components
     if (isset($results[0]->address_components)) {
-      foreach($results[0]->address_components as $ac) {
-        if (in_array('postal_code',$ac->types)) {
+      foreach ($results[0]->address_components as $ac) {
+        if (in_array('postal_code', $ac->types)) {
           $data['postcode'] = $ac->long_name;
-        } else if (in_array('postal_town',$ac->types)) {
+        } else if (in_array('postal_town', $ac->types)) {
           $data['town'] = $ac->long_name;
-        } else if (in_array('administrative_area_level_2',$ac->types)) {
+        } else if (in_array('administrative_area_level_2', $ac->types)) {
           $data['county'] = $ac->long_name;
-        } else if (in_array('country',$ac->types)) {
+        } else if (in_array('country', $ac->types)) {
           $data['country']      = $ac->long_name;
           $data['country_code'] = $ac->short_name;
         }
@@ -109,7 +111,7 @@ class Geolocation
    * @return array
    * @throws GeolocationException
    */
-  public static function getAllResults( $lookup ) {
+  public static function getAllResults($lookup) {
     
     if (strlen($lookup) == 0) {
       throw new GeolocationException("No address to Geocode", 1);
@@ -135,12 +137,14 @@ class Geolocation
       throw new GeoLocationException('cURL isn\'t installed.');
     }
 
-    if (self::$API_KEY) $parameters['key'] = self::$API_KEY;
+    if (self::$API_KEY) {
+      $parameters['key'] = self::$API_KEY;
+    }
     
     // create URL
     $url = self::API_URL . '?';
     foreach ($parameters as $key => $value) {
-       $url .= $key . '=' . urlencode($value) . '&';
+        $url .= $key . '=' . urlencode($value) . '&';
     }
     // trim last &
     $url = trim($url, '&');
@@ -165,13 +169,17 @@ class Geolocation
     curl_close($curl);
 
     // we have errors
-    if ($errorNumber != '') throw new GeoLocationException($errorMessage);
+    if ($errorNumber != '') {
+      throw new GeoLocationException($errorMessage);
+    }
 
     // redefine response as json decoded
     $response = json_decode($response);
 
     // We have an error so throw it
-    if (isset($response->error_message)) throw new GeoLocationException($response->error_message);
+    if (isset($response->error_message)) {
+      throw new GeoLocationException($response->error_message);
+    }
 
     // return the content
     return $response->results;
